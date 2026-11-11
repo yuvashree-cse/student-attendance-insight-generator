@@ -1,72 +1,109 @@
 import os
-from flask import Flask, render_template, request
+import logging
+
+from flask import Flask, render_template
+from flask import request
+
 from dotenv import load_dotenv
-from langchain_groq import ChatGroq
-from langchain_core.prompts import ChatPromptTemplate
 
-load_dotenv()
-app = Flask(__name__)
+import ai_service
 
-llm = ChatGroq(
-    model="openai/gpt-oss-120b",
-    api_key=os.getenv("GROQ_API_KEY")
+from validators import (
+    validate_attendance,
+    AttendanceValidationError
 )
 
-prompt = ChatPromptTemplate.from_template("""
-You are a student attendance advisor.
 
-Student attendance: {user_input}%
+load_dotenv()
 
-Generate feedback using EXACTLY this format:
 
-Attendance Classification: [Excellent/Good/Average/Poor]
+def create_app(test_config=None):
 
-Performance Analysis:
-Write exactly 2 short sentences.
+    app = Flask(__name__)
 
-Improvement Tips:
-1. [Short tip]
-2. [Short tip]
-3. [Short tip]
-
-Rules:
-- Keep the response under 80 words.
-- Use simple English.
-- Do not generate tables.
-- Do not make assumptions about the student's behavior.
-- Classify below 75% as Poor, 75-84% as Average,
-  85-94% as Good, and 95-100% as Excellent.
-""")
-
-chain = prompt | llm
-
-@app.route("/", methods=["GET", "POST"])
-def home():
-    result = ""
-    user_input = ""
-
-    if request.method == "POST":
-        user_input = request.form.get("user_input", "").strip()
-
-        try:
-            percentage = float(user_input)
-            if not 0 <= percentage <= 100:
-                raise ValueError()
-
-            result = chain.invoke({
-                "user_input": percentage
-            }).content
-
-        except ValueError:
-            result = "Please enter a valid percentage between 0 and 100."
-        except Exception:
-            result = "Error generating feedback."
-
-    return render_template(
-        "index.html",
-        result=result,
-        user_input=user_input
+    app.config.from_mapping(
+        GROQ_API_KEY=os.getenv("GROQ_API_KEY"),
+        GROQ_MODEL=os.getenv(
+            "GROQ_MODEL",
+            "openai/gpt-oss-120b"
+        )
     )
+
+    if test_config:
+        app.config.update(test_config)
+
+    logging.basicConfig(level=logging.INFO)
+
+    @app.route("/", methods=["GET", "POST"])
+    def home():
+
+        result = ""
+        error = ""
+        user_input = ""
+
+        if request.method == "POST":
+
+            user_input = request.form.get(
+                "user_input", ""
+            )
+
+            try:
+
+                percentage = validate_attendance(
+                    user_input
+                )
+
+                result = ai_service.generate_feedback(
+                    percentage=percentage,
+                    api_key=app.config.get("GROQ_API_KEY"),
+                    model=app.config.get("GROQ_MODEL")
+                )
+
+            except AttendanceValidationError as exc:
+
+                error = str(exc)
+
+            except ai_service.MissingAPIKeyError:
+
+                app.logger.error(
+                    "Groq API key is missing."
+                )
+
+                error = (
+                    "AI service is not configured. "
+                    "Please contact the administrator."
+                )
+
+            except ai_service.AIServiceError:
+
+                error = (
+                    "Unable to generate feedback. "
+                    "Please try again later."
+                )
+
+            except Exception:
+
+                app.logger.exception(
+                    "Unexpected application error."
+                )
+
+                error = (
+                    "An unexpected error occurred. "
+                    "Please try again."
+                )
+
+        return render_template(
+            "index.html",
+            result=result,
+            error=error,
+            user_input=user_input
+        )
+
+    return app
+
+
+app = create_app()
+
 
 if __name__ == "__main__":
     app.run(debug=True)

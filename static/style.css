@@ -85,6 +85,15 @@ button:hover {
     white-space: pre-line;
 }
 
+.error {
+    border-color: #e05252;
+}
+
+.error h2,
+.error p {
+    color: #ff7777;
+}
+
 @media (max-width: 600px) {
     .container {
         padding: 35px 5%;

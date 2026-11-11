@@ -37,6 +37,9 @@ Instead of simply displaying an attendance percentage, the application uses a La
 ```text
 student-attendance-insight-generator/
 │
+├── tests/
+│   └── test_app.py
+│
 ├── static/
 │   └── style.css
 │
@@ -44,6 +47,8 @@ student-attendance-insight-generator/
 │   └── index.html
 │
 ├── app.py
+├── validators.py
+├── ai_service.py
 ├── requirements.txt
 ├── .env.example
 ├── .gitignore

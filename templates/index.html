@@ -1,17 +1,29 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Student Attendance Insight Generator</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
 </head>
+
 <body>
 
 <div class="container">
 
     <h1>Student Attendance Insight Generator</h1>
-    <p>Enter your attendance percentage to receive AI-powered performance feedback.</p>
+
+    <p>
+        Enter your attendance percentage to receive
+        AI-powered performance feedback.
+    </p>
 
     <form method="POST">
+
         <input
             type="number"
             name="user_input"
@@ -22,8 +34,19 @@
             value="{{ user_input }}"
             required
         >
-        <button type="submit">Generate Feedback</button>
+
+        <button type="submit">
+            Generate Feedback
+        </button>
+
     </form>
+
+    {% if error %}
+    <div class="result error">
+        <h2>Something went wrong</h2>
+        <p>{{ error }}</p>
+    </div>
+    {% endif %}
 
     {% if result %}
     <div class="result">
