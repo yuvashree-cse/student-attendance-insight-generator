@@ -1,41 +1,41 @@
 # 🎓 Student Attendance Insight Generator
 
-An AI-powered student attendance analysis application built using **Python, Flask, LangChain, and Groq**.
+An AI-powered web application that analyzes student attendance percentages and generates personalized attendance insights, performance classifications, and improvement suggestions.
 
-The application allows students to enter their attendance percentage and receive AI-generated feedback, including an attendance classification, performance analysis, and improvement suggestions.
-
-## 📌 Project Overview
-
-The Student Attendance Insight Generator aims to make attendance tracking and analysis more informative for students.
-
-Instead of simply displaying an attendance percentage, the application uses a Large Language Model (LLM) to generate understandable feedback and practical suggestions based on the entered attendance value.
+Built using **Python, Flask, LangChain, and Groq**, this project combines AI-powered feedback generation with structured backend validation and error handling.
 
 ## ✨ Features
 
-- **Attendance Input:** Enter attendance percentages between 0 and 100.
-- **AI-Powered Analysis:** Generate feedback using a Groq-hosted language model through LangChain.
-- **Attendance Classification:** Classify attendance into Excellent, Good, Average, or Poor categories.
-- **Performance Analysis:** Receive a short explanation of the entered attendance percentage.
-- **Improvement Suggestions:** Get three practical attendance improvement tips.
-- **Input Validation:** Reject invalid attendance values.
-- **Responsive Interface:** Use a simple dark-themed interface with blue and cyan accents.
+- **AI-Powered Attendance Analysis:** Generates feedback based on the student's attendance percentage.
+- **Attendance Classification:** Categorizes attendance into four levels:
+  - Excellent: 95%–100%
+  - Good: 85%–below 95%
+  - Average: 75%–below 85%
+  - Poor: Below 75%
+- **Performance Analysis:** Provides a short explanation of the student's attendance status.
+- **Improvement Suggestions:** Generates three practical suggestions to improve attendance.
+- **Input Validation:** Rejects empty, non-numeric, infinite, and out-of-range values.
+- **Error Handling:** Handles missing API credentials and AI service failures gracefully.
+- **Modular Backend:** Separates application logic, input validation, and AI functionality.
+- **Automated Testing:** Uses pytest to verify application behavior and validation logic.
 
 ## 🛠️ Tech Stack
 
-| Technology | Purpose |
-|---|---|
-| Python | Core programming language |
-| Flask | Backend web framework |
-| LangChain | LLM integration and prompt management |
-| Groq | Language model inference |
-| HTML | Webpage structure |
-| CSS | Interface styling |
-| python-dotenv | Environment variable management |
+| Category               | Technologies   |
+| ---------------------- | -------------- |
+| Programming Language   | Python         |
+| Frontend               | HTML, CSS      |
+| Backend                | Flask          |
+| AI Framework           | LangChain      |
+| AI Model Provider      | Groq           |
+| Environment Management | python-dotenv  |
+| Testing                | pytest         |
+| Version Control        | Git and GitHub |
 
-## 📂 Project Structure
+## 📁 Project Structure
 
 ```text
-student-attendance-insight-generator/
+Student-Attendance-Insight-Generator/
 │
 ├── tests/
 │   └── test_app.py
@@ -49,65 +49,73 @@ student-attendance-insight-generator/
 ├── app.py
 ├── validators.py
 ├── ai_service.py
-├── requirements.txt
+│
 ├── .env.example
 ├── .gitignore
+├── requirements.txt
 └── README.md
 ```
 
-## ⚙️ Installation and Setup
+## ⚙️ How It Works
+
+1. The user enters their attendance percentage through the web interface.
+2. Flask receives the submitted input.
+3. The validation module checks whether the input is valid and within the range of 0–100.
+4. The validated percentage is passed to the AI service.
+5. LangChain constructs the prompt and communicates with the configured Groq language model.
+6. The AI generates an attendance classification, performance analysis, and improvement suggestions.
+7. Flask displays the generated insights on the web page.
+
+## 🚀 Installation and Setup
 
 Follow these steps to run the project locally.
 
-### 1. Clone the repository
+### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/YOUR-GITHUB-USERNAME/student-attendance-insight-generator.git
+git clone <YOUR_GITHUB_REPOSITORY_URL>
 ```
 
-### 2. Navigate to the project directory
+Navigate into the project directory:
 
 ```bash
-cd student-attendance-insight-generator
+cd Student-Attendance-Insight-Generator
 ```
 
-### 3. Create a virtual environment
+### 2. Create a Virtual Environment
 
 ```bash
 python -m venv .venv
 ```
 
-### 4. Activate the virtual environment
-
-For Windows PowerShell:
+Activate the environment on Windows PowerShell:
 
 ```powershell
 .\.venv\Scripts\Activate.ps1
 ```
 
-### 5. Install dependencies
+### 3. Install Dependencies
 
 ```bash
-pip install -r requirements.txt
+python -m pip install -r requirements.txt
 ```
 
-### 6. Configure environment variables
+### 4. Configure Environment Variables
 
 Create a `.env` file in the project root directory.
 
-Add your Groq API key:
+Add your Groq API credentials:
 
 ```env
-GROQ_API_KEY=your_groq_api_key_here
+GROQ_API_KEY=your_groq_api_key
+GROQ_MODEL=openai/gpt-oss-120b
 ```
 
-Replace the placeholder with your actual API key.
+Replace `your_groq_api_key` with your actual API key.
 
-**Important:** Never upload your `.env` file or expose your API key publicly.
+**Important:** Never upload your `.env` file or expose your API key on GitHub.
 
-## 🚀 Running the Application
-
-After completing the installation and configuration:
+### 5. Run the Application
 
 ```bash
 python app.py
@@ -116,57 +124,100 @@ python app.py
 Open your browser and visit:
 
 ```text
-http://127.0.0.1:5000/
+http://127.0.0.1:5000
 ```
 
-Enter an attendance percentage and click **Generate Feedback** to receive AI-generated attendance insights.
+## 🧪 Running Automated Tests
 
-## 🔄 Application Workflow
+This project uses pytest to test input validation and Flask application behavior.
 
-1. The student enters an attendance percentage.
-2. Flask receives the submitted value.
-3. The backend validates that the value is between 0 and 100.
-4. LangChain passes the input to the configured Groq language model.
-5. The language model generates attendance feedback.
-6. Flask sends the generated result to the webpage.
-7. The student views the attendance insights.
+Run the test suite using:
 
-## 📊 Attendance Classification
+```bash
+python -m pytest -v
+```
 
-The current prompt uses the following classification thresholds:
+### Test Coverage
 
-| Attendance | Classification |
-|---|---|
-| Below 75% | Poor |
-| 75% – 84% | Average |
-| 85% – 94% | Good |
-| 95% – 100% | Excellent |
+The current test suite verifies:
 
-These are configurable project thresholds and may differ from an institution's official attendance policy.
+- Valid attendance percentages.
+- Invalid numeric inputs.
+- Empty input handling.
+- Boundary values such as 0 and 100.
+- Rejection of NaN and Infinity values.
+- Successful homepage rendering.
+- Invalid form submissions.
+- Successful feedback generation using a mocked AI service.
+- Missing API key handling.
+- AI service failure handling.
 
-## 🔮 Future Enhancements
+**Latest Test Result:**
 
-The following features are planned for future versions:
+```text
+18 passed
+0 failed
+```
 
-- Automatic attendance percentage calculation using classes attended and total classes.
-- Attendance eligibility checker based on a configurable minimum requirement.
-- Calculator for the number of classes required to reach a target percentage.
-- Interactive attendance dashboard with progress indicators.
-- Attendance history and data storage using SQLite or PostgreSQL.
-- Improved analytics and visual representations.
-- Application deployment for public access.
+## 🏗️ Backend Architecture
 
-## 🎯 Project Objective
+The backend follows a modular structure to improve maintainability and separation of responsibilities.
 
-This project is being developed to explore practical AI application development by combining Python web development, prompt engineering, LLM integration, backend validation, and user interface design.
+| File                | Responsibility                                                 |
+| ------------------- | -------------------------------------------------------------- |
+| `app.py`            | Flask application, routes, configuration, and request handling |
+| `validators.py`     | Attendance input validation and validation errors              |
+| `ai_service.py`     | LangChain prompt construction and Groq API communication       |
+| `tests/test_app.py` | Automated tests for validation and application behavior        |
+
+## 🔐 Error Handling and Validation
+
+The application includes backend safeguards to handle:
+
+- Missing attendance values.
+- Non-numeric input.
+- Attendance values outside the 0–100 range.
+- Non-finite numeric values.
+- Missing Groq API credentials.
+- AI service failures.
+- Unexpected application errors.
+
+These checks help prevent invalid inputs from reaching the AI service and provide meaningful error messages to users.
+
+## 🎯 Project Objectives
+
+This project was developed to gain practical experience in:
+
+- Building AI-powered web applications.
+- Integrating Large Language Models using LangChain.
+- Connecting external AI services through APIs.
+- Developing backend applications with Flask.
+- Implementing input validation and error handling.
+- Writing automated tests using pytest.
+- Organizing Python applications using modular architecture.
+- Managing source code using Git and GitHub.
+
+## 🔮 Future Improvements
+
+Potential enhancements for future versions include:
+
+- Student attendance history and tracking.
+- Database integration for storing attendance records.
+- Interactive attendance analytics and visualizations.
+- More detailed and structured AI-generated reports.
+- Downloadable attendance reports.
+- User authentication and personalized dashboards.
+- API endpoints for external integrations.
+- Production deployment and performance optimization.
+- Rate limiting and additional security protections.
 
 ## 👩‍💻 Author
 
 **Yuvashree C**
 
-Computer Science and Engineering Student
+B.E. Computer Science and Engineering Student
 
-GitHub: https://github.com/yuvashree-cse
+Interested in Artificial Intelligence, Large Language Models, and AI-powered application development.
 
 ---
 
